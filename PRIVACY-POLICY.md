@@ -2,7 +2,7 @@
 
 # **Privacy Policy**
 
-Last updated: January 15, 2025
+Last updated: January 29, 2025
 
 This Privacy Policy describes our policies and procedures on the collection, use and disclosure of your information when you use the service and tells you about your privacy rights and how the law protects you.
 
