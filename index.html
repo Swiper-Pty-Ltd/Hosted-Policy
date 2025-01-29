@@ -6,43 +6,104 @@
     <title>Privacy Policy - Swiper App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
     <style>
-        .markdown-body {
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            min-width: 200px;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        .markdown-body {
+            flex: 1;
+            width: 100%;
             max-width: 980px;
             margin: 0 auto;
-            padding: 45px;
+            padding: 2rem;
+            background-color: #ffffff;
         }
+
+        .navigation {
+            width: 100%;
+            background: #f6f8fa;
+            padding: 1rem;
+            border-top: 1px solid #e1e4e8;
+        }
+
+        .navigation ul {
+            max-width: 980px;
+            margin: 0 auto;
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .navigation h3 {
+            max-width: 980px;
+            margin: 0 auto 0.5rem auto;
+        }
+
+        .navigation a {
+            color: #0366d6;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            flex: 1;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
         @media (max-width: 767px) {
             .markdown-body {
-                padding: 15px;
+                padding: 1rem;
             }
-        }
-        .navigation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            height: 100%;
-            background: #f6f8fa;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .content {
-            margin-left: 250px;
+            
+            .navigation {
+                padding: 1rem;
+            }
+            
+            .navigation ul {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="navigation">
+    <div class="content markdown-body">
+        <div id="home" class="page active">
+            <h1>Welcome to Swiper App Documentation</h1>
+            <p>Please select a document from the navigation below.</p>
+        </div>
+        <div id="privacy-policy" class="page"></div>
+    </div>
+    <nav class="navigation">
         <h3>Documentation</h3>
         <ul>
-            <li><a href="#privacy-policy">Privacy Policy</a></li>
+            <li><a onclick="navigate('home')">Home</a></li>
+            <li><a onclick="navigate('privacy-policy')">Privacy Policy</a></li>
         </ul>
-    </div>
-    <div class="content markdown-body">
-        <div id="privacy-policy"></div>
-    </div>
+    </nav>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         // Function to fetch and render markdown files
@@ -56,9 +117,46 @@
             }
         }
 
-        // Load privacy policy markdown file
+        // Navigation function
+        function navigate(page) {
+            // Update URL
+            window.history.pushState({ page }, '', `/${page}`);
+            updateContent(page);
+        }
+
+        // Update content based on current page
+        function updateContent(page) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            // Show current page
+            const currentPage = document.getElementById(page);
+            if (currentPage) {
+                currentPage.classList.add('active');
+                
+                // Load content if it's the privacy policy page
+                if (page === 'privacy-policy' && !currentPage.innerHTML) {
+                    fetchAndRenderMarkdown('PRIVACY-POLICY.md', 'privacy-policy');
+                }
+            }
+        }
+
+        // Handle browser back/forward buttons
+        window.onpopstate = function(event) {
+            if (event.state && event.state.page) {
+                updateContent(event.state.page);
+            }
+        };
+
+        // Initial page load
         window.onload = function() {
-            fetchAndRenderMarkdown('PRIVACY-POLICY.md', 'privacy-policy');
+            // Get current path from URL
+            const path = window.location.pathname.substring(1) || 'home';
+            updateContent(path);
+            // Set initial state
+            window.history.replaceState({ page: path }, '', `/${path}`);
         };
     </script>
 </body>
